@@ -69,11 +69,11 @@ The script performs the following steps:
     - Builds and starts the Docker containers for the inference service, updater, head, and workers.
 ## Checking Running Docker Containers
 
-To check the running Docker containers, use the following command:
+**To check the running Docker containers, use the following command:
 
-     ```sh
+     
      docker ps
-     ```
+     
 
 This will display a list of all running Docker containers along with their status and other relevant information.
     
