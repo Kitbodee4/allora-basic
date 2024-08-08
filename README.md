@@ -1,6 +1,5 @@
 # Allora Chain Setup Script
 
-![Allora Screenshot](https://user-images.githubusercontent.com/90371338/9e1d6236-ff51-48a1-a9f6-1149c842a4d0)
 
 This repository contains a setup script to install and configure Allora chain and workers. It includes steps to add a new user, install dependencies, set up Docker, and configure Allora chain.
 
