@@ -92,14 +92,14 @@ echo "Installing Worker..."
 echo "===================="
 cd $HOME
 git clone https://github.com/allora-network/basic-coin-prediction-node && cd basic-coin-prediction-node && echo "Worker repository cloned successfully." || { echo "Failed to clone Worker repository."; exit 1; }
-mkdir workers workers/worker-1 workers/worker-2 head-data && echo "Directories for workers created successfully." || { echo "Failed to create directories for workers."; exit 1; }
+mkdir workers workers/worker-1 workers/worker-2  workers/worker-3 head-data && echo "Directories for workers created successfully." || { echo "Failed to create directories for workers."; exit 1; }
 
 # Give Permissions
 echo
 echo "===================="
 echo "Setting permissions..."
 echo "===================="
-sudo chmod -R 777 workers/worker-1 && sudo chmod -R 777 workers/worker-2 && sudo chmod -R 777 head-data && echo "Permissions set successfully." || { echo "Failed to set permissions."; exit 1; }
+sudo chmod -R 777 workers/worker-1 && sudo chmod -R 777 workers/worker-2 && sudo chmod -R 777 workers/worker-3 && sudo chmod -R 777 head-data && echo "Permissions set successfully." || { echo "Failed to set permissions."; exit 1; }
 
 # Create head keys
 echo
@@ -121,6 +121,14 @@ echo "Creating worker-2 keys..."
 echo "===================="
 sudo docker run -it --entrypoint=bash -v $(pwd)/workers/worker-2:/data alloranetwork/allora-inference-base:latest -c "mkdir -p /data/keys && (cd /data/keys && allora-keys)" && echo "Worker-2 keys created successfully." || { echo "Failed to create worker-2 keys."; exit 1; }
 
+echo
+echo "===================="
+echo "Creating worker-3 keys..."
+echo "===================="
+sudo docker run -it --entrypoint=bash -v $(pwd)/workers/worker-3:/data alloranetwork/allora-inference-base:latest -c "mkdir -p /data/keys && (cd /data/keys && allora-keys)" && echo "Worker-3 keys created successfully." || { echo "Failed to create worker-2 keys."; exit 1; }
+
+
+cat head-data/keys/identity
 # Prompt for HEAD_ID and WALLET_SEED_PHRASE
 echo
 echo "===================="
@@ -199,7 +207,7 @@ services:
         allora-node --role=head --peer-db=/data/peerdb --function-db=/data/function-db  \
           --runtime-path=/app/runtime --runtime-cli=bls-runtime --workspace=/data/workspace \
           --private-key=/data/keys/priv.bin --log-level=debug --port=9010 --rest-api=:6000 \
-          --boot-nodes=/dns/head-0-p2p.testnet-1.testnet.allora.network/tcp/32130/p2p/12D3KooWLBhsSucVVcyVCaM9pvK8E7tWBM9L19s7XQHqqejyqgEC,/dns/head-1-p2p.testnet-1.testnet.allora.network/tcp/32131/p2p/12D3KooWEUNWg7YHeeCtH88ju63RBfY5hbdv9hpv84ffEZpbJszt,/dns/head-2-p2p.testnet-1.testnet.allora.network/tcp/32132/p2p/12D3KooWATfUSo95wtZseHbogpckuFeSvpL4yks6XtvrjVHcCCXk,/dns/head-5-p2p.testnet-1.testnet.allora.network/tcp/32135/p2p/12D3KooWAazxKoYszYt4XhCrGWoEUyAFMaU7DB9RZ8TsA7qwLfin,/dns/head-4-p2p.testnet-1.testnet.allora.network/tcp/32134/p2p/12D3KooWRF8HNU21AukE7KC6kZqxqvCiZ5nM9xcLW4YvsuGAYbcm,/dns/head-3-p2p.testnet-1.testnet.allora.network/tcp/32133/p2p/12D3KooWDrArwBSCNxwL3mgJ2NaUygdtPtiwVQtPJafyAH6FSiUf
+          --boot-nodes=/dns4/head-0-p2p.v2.testnet.allora.network/tcp/32130/p2p/12D3KooWGKY4z2iNkDMERh5ZD8NBoAX6oWzkDnQboBRGFTpoKNDF
     ports:
       - "6000:6000"
     volumes:
@@ -233,7 +241,7 @@ services:
         allora-node --role=worker --peer-db=/data/peerdb --function-db=/data/function-db \
           --runtime-path=/app/runtime --runtime-cli=bls-runtime --workspace=/data/workspace \
           --private-key=/data/keys/priv.bin --log-level=debug --port=9011 \
-          --boot-nodes=/dns/head-0-p2p.testnet-1.testnet.allora.network/tcp/32130/p2p/12D3KooWLBhsSucVVcyVCaM9pvK8E7tWBM9L19s7XQHqqejyqgEC,/dns/head-1-p2p.testnet-1.testnet.allora.network/tcp/32131/p2p/12D3KooWEUNWg7YHeeCtH88ju63RBfY5hbdv9hpv84ffEZpbJszt,/dns/head-2-p2p.testnet-1.testnet.allora.network/tcp/32132/p2p/12D3KooWATfUSo95wtZseHbogpckuFeSvpL4yks6XtvrjVHcCCXk,/dns/head-5-p2p.testnet-1.testnet.allora.network/tcp/32135/p2p/12D3KooWAazxKoYszYt4XhCrGWoEUyAFMaU7DB9RZ8TsA7qwLfin,/dns/head-4-p2p.testnet-1.testnet.allora.network/tcp/32134/p2p/12D3KooWRF8HNU21AukE7KC6kZqxqvCiZ5nM9xcLW4YvsuGAYbcm,/dns/head-3-p2p.testnet-1.testnet.allora.network/tcp/32133/p2p/12D3KooWDrArwBSCNxwL3mgJ2NaUygdtPtiwVQtPJafyAH6FSiUf,/ip4/172.22.0.100/tcp/9010/p2p/${HEAD_ID} \
+          --boot-nodes=/ip4/172.22.0.100/tcp/9010/p2p/${HEAD_ID} \
           --topic=allora-topic-1-worker --allora-chain-worker-mode=worker \
           --allora-chain-restore-mnemonic='${WALLET_SEED_PHRASE}' \
           --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
@@ -273,7 +281,7 @@ services:
         allora-node --role=worker --peer-db=/data/peerdb --function-db=/data/function-db \
           --runtime-path=/app/runtime --runtime-cli=bls-runtime --workspace=/data/workspace \
           --private-key=/data/keys/priv.bin --log-level=debug --port=9013 \
-          --boot-nodes=/dns/head-0-p2p.testnet-1.testnet.allora.network/tcp/32130/p2p/12D3KooWLBhsSucVVcyVCaM9pvK8E7tWBM9L19s7XQHqqejyqgEC,/dns/head-1-p2p.testnet-1.testnet.allora.network/tcp/32131/p2p/12D3KooWEUNWg7YHeeCtH88ju63RBfY5hbdv9hpv84ffEZpbJszt,/dns/head-2-p2p.testnet-1.testnet.allora.network/tcp/32132/p2p/12D3KooWATfUSo95wtZseHbogpckuFeSvpL4yks6XtvrjVHcCCXk,/dns/head-5-p2p.testnet-1.testnet.allora.network/tcp/32135/p2p/12D3KooWAazxKoYszYt4XhCrGWoEUyAFMaU7DB9RZ8TsA7qwLfin,/dns/head-4-p2p.testnet-1.testnet.allora.network/tcp/32134/p2p/12D3KooWRF8HNU21AukE7KC6kZqxqvCiZ5nM9xcLW4YvsuGAYbcm,/dns/head-3-p2p.testnet-1.testnet.allora.network/tcp/32133/p2p/12D3KooWDrArwBSCNxwL3mgJ2NaUygdtPtiwVQtPJafyAH6FSiUf,/ip4/172.22.0.100/tcp/9010/p2p/${HEAD_ID} \
+          --boot-nodes=/ip4/172.22.0.100/tcp/9010/p2p/${HEAD_ID} \
           --topic=allora-topic-2-worker --allora-chain-worker-mode=worker \
           --allora-chain-restore-mnemonic='${WALLET_SEED_PHRASE}' \
           --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
@@ -288,8 +296,47 @@ services:
     networks:
       eth-model-local:
         aliases:
-          - worker1
+          - worker2
         ipv4_address: 172.22.0.13
+  worker-3:
+    container_name: worker-3
+    environment:
+      - INFERENCE_API_ADDRESS=http://inference:8000
+      - HOME=/data
+    build:
+      context: .
+      dockerfile: Dockerfile_b7s
+    entrypoint:
+      - "/bin/bash"
+      - "-c"
+      - |
+        if [ ! -f /data/keys/priv.bin ]; then
+          echo "Generating new private keys..."
+          mkdir -p /data/keys
+          cd /data/keys
+          allora-keys
+        fi
+        # Change boot-nodes below to the key advertised by your head
+        allora-node --role=worker --peer-db=/data/peerdb --function-db=/data/function-db \
+          --runtime-path=/app/runtime --runtime-cli=bls-runtime --workspace=/data/workspace \
+          --private-key=/data/keys/priv.bin --log-level=debug --port=9013 \
+          --boot-nodes=/ip4/172.22.0.100/tcp/9010/p2p/${HEAD_ID} \
+          --topic=allora-topic-7-worker --allora-chain-worker-mode=worker \
+          --allora-chain-restore-mnemonic='${WALLET_SEED_PHRASE}' \
+          --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
+          --allora-chain-key-name=worker-3 \
+          --allora-chain-topic-id=7
+    volumes:
+      - ./workers/worker-3:/data
+    working_dir: /data
+    depends_on:
+      - inference
+      - head
+    networks:
+      eth-model-local:
+        aliases:
+          - worker3
+        ipv4_address: 172.22.0.14
   
 networks:
   eth-model-local:
