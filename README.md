@@ -81,20 +81,20 @@ This will display a list of all running Docker containers along with their statu
 
 **To check the logs for worker 1, use the following command:
 
-     ```sh
+     
      docker compose logs -f worker-1
-     ```
+     
 
 **To check the logs for worker 2, use the following command:
 
-     ```sh
+     
      docker compose logs -f worker-2
-     ```
+     
 **To check the logs for worker 3, use the following command:
 
-     ```sh
+     
      docker compose logs -f worker-3
-     ```
+     
 These commands will follow the logs of the specified worker containers
 
 ## Contributing
