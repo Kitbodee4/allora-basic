@@ -391,4 +391,5 @@ echo "===================="
 echo "Running Docker Compose..."
 echo "===================="
 echo
-docker-compose up -d 
+docker-compose build
+docker-compose up -d
